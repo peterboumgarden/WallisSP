@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EnergyCoRP — Knowledge Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f12;
+  --bg2: #13161b;
+  --bg3: #1a1e24;
+  --bg4: #22272f;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e8eaed;
+  --text2: #8b9099;
+  --text3: #565c66;
+  --accent: #e8a838;
+  --accent2: #c4882a;
+  --accent-bg: rgba(232,168,56,0.08);
+  --accent-border: rgba(232,168,56,0.25);
+  --teal: #2ec4a0;
+  --teal-bg: rgba(46,196,160,0.08);
+  --purple: #a78bfa;
+  --purple-bg: rgba(167,139,250,0.08);
+  --coral: #f87171;
+  --coral-bg: rgba(248,113,113,0.08);
+  --blue: #60a5fa;
+  --blue-bg: rgba(96,165,250,0.08);
+  --font: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --r: 8px;
+  --r-lg: 12px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── KEY GATE ── */
+#keygate {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  padding: 24px;
+}
+.gate-card {
+  width: 100%; max-width: 420px;
+  background: var(--bg2);
+  border: 0.5px solid var(--border2);
+  border-radius: 16px;
+  padding: 40px;
+}
+.gate-logo {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 32px;
+}
+.gate-logo-mark {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+.gate-logo-mark svg { width: 18px; height: 18px; }
+.gate-logo-name { font-size: 15px; font-weight: 500; color: var(--text); }
+.gate-logo-sub { font-size: 12px; color: var(--text3); }
+.gate-title { font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+.gate-desc { font-size: 13px; color: var(--text2); margin-bottom: 28px; line-height: 1.7; }
+.gate-label { font-size: 11px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+.gate-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--r);
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  outline: none;
+  transition: border-color .15s;
+  margin-bottom: 8px;
+}
+.gate-input:focus { border-color: var(--accent); }
+.gate-hint { font-size: 11px; color: var(--text3); margin-bottom: 24px; }
+.gate-hint a { color: var(--accent); text-decoration: none; }
+.gate-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #0d0f12;
+  border: none;
+  border-radius: var(--r);
+  padding: 11px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.gate-btn:hover { opacity: .88; }
+.gate-err { font-size: 12px; color: var(--coral); margin-top: 10px; display: none; }
+
+/* ── MAIN SHELL ── */
+#app { display: none; height: 100vh; display: none; flex-direction: column; }
+#app.visible { display: flex; }
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.logo-mark {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-mark svg { width: 15px; height: 15px; }
+.logo-name { font-size: 14px; font-weight: 500; }
+.logo-divider { width: 1px; height: 16px; background: var(--border2); }
+.logo-product { font-size: 13px; color: var(--text2); }
+.header-right { display: flex; align-items: center; gap: 8px; }
+.header-tag {
+  font-size: 11px; font-family: var(--mono);
+  padding: 3px 8px;
+  background: var(--accent-bg);
+  border: 0.5px solid var(--accent-border);
+  border-radius: 20px;
+  color: var(--accent);
+}
+.clear-btn {
+  font-size: 12px; color: var(--text3);
+  background: none; border: 0.5px solid var(--border);
+  border-radius: var(--r); padding: 4px 10px;
+  cursor: pointer; font-family: var(--font);
+  transition: all .12s;
+}
+.clear-btn:hover { border-color: var(--border2); color: var(--text2); }
+
+/* ── LAYOUT ── */
+.body { display: flex; flex: 1; overflow: hidden; }
+.sidebar {
+  width: 220px; flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 0.5px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  padding: 16px 0;
+}
+.sidebar-section { margin-bottom: 4px; }
+.sidebar-hdr {
+  font-size: 10px; font-family: var(--mono);
+  color: var(--text3); letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 6px 16px 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text2);
+  transition: all .1s;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: var(--bg3); color: var(--text); border-left-color: var(--accent); }
+.nav-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 16px;
+  border-top: 0.5px solid var(--border);
+  font-size: 11px; color: var(--text3); line-height: 1.6;
+}
+
+/* ── MAIN CONTENT ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar {
+  padding: 16px 24px 14px;
+  border-bottom: 0.5px solid var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.topbar-title { font-size: 16px; font-weight: 500; margin-bottom: 3px; }
+.topbar-sub { font-size: 12px; color: var(--text2); }
+.scope-badge {
+  font-size: 11px; font-family: var(--mono);
+  padding: 3px 8px; border-radius: 20px;
+  border: 0.5px solid; white-space: nowrap;
+  margin-top: 2px;
+}
+
+.chips-bar {
+  padding: 10px 24px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  flex-shrink: 0;
+}
+.chips-lbl { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-right: 4px; }
+.chip {
+  font-size: 12px; padding: 4px 10px;
+  border: 0.5px solid var(--border2);
+  border-radius: 20px; cursor: pointer;
+  color: var(--text2); background: transparent;
+  transition: all .1s; white-space: nowrap;
+  font-family: var(--font);
+}
+.chip:hover { border-color: var(--accent-border); color: var(--accent); background: var(--accent-bg); }
+
+.prompt-bar {
+  padding: 14px 24px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex; gap: 10px;
+  flex-shrink: 0;
+}
+.prompt-input {
+  flex: 1;
+  background: var(--bg3);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--r);
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  resize: none;
+  outline: none;
+  height: 60px;
+  transition: border-color .15s;
+}
+.prompt-input:focus { border-color: var(--accent); }
+.prompt-input::placeholder { color: var(--text3); }
+.ask-btn {
+  align-self: flex-end;
+  background: var(--accent);
+  color: #0d0f12;
+  border: none;
+  border-radius: var(--r);
+  padding: 10px 18px;
+  font-family: var(--font);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .12s;
+}
+.ask-btn:hover { opacity: .88; }
+.ask-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+.feed {
+  flex: 1; overflow-y: auto;
+  padding: 20px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+.feed::-webkit-scrollbar { width: 4px; }
+.feed::-webkit-scrollbar-track { background: transparent; }
+.feed::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+
+.empty {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--text3); text-align: center; gap: 10px;
+  padding: 40px;
+}
+.empty-icon { opacity: .25; }
+.empty p { font-size: 13px; max-width: 260px; line-height: 1.7; }
+
+.answer-card {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  animation: fadeUp .2s ease;
+}
+@keyframes fadeUp { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+.card-header {
+  padding: 10px 16px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+}
+.card-q {
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.card-time { font-size: 11px; color: var(--text3); font-family: var(--mono); flex-shrink: 0; }
+.card-body { padding: 14px 16px; font-size: 13px; color: var(--text); line-height: 1.72; white-space: pre-wrap; }
+.card-footer {
+  padding: 8px 16px;
+  border-top: 0.5px solid var(--border);
+  display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+}
+.source-pill {
+  font-size: 11px; font-family: var(--mono);
+  padding: 2px 8px;
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  border-radius: 20px;
+  color: var(--text3);
+}
+.thinking-card {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text2); font-size: 13px;
+}
+.dots { display: flex; gap: 4px; }
+.dots span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent);
+  animation: blink 1.2s ease-in-out infinite;
+}
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+</style>
+</head>
+<body>
+
+<!-- KEY GATE -->
+<div id="keygate">
+  <div class="gate-card">
+    <div class="gate-logo">
+      <div class="gate-logo-mark">
+        <svg viewBox="0 0 18 18" fill="none">
+          <path d="M3 14L9 4L15 14H3Z" fill="#0d0f12" stroke="#0d0f12" stroke-width=".5"/>
+          <circle cx="9" cy="10" r="2" fill="#0d0f12"/>
+        </svg>
+      </div>
+      <div>
+        <div class="gate-logo-name">EnergyCoRP</div>
+        <div class="gate-logo-sub">Knowledge Intelligence</div>
+      </div>
+    </div>
+    <div class="gate-title">Enter your API key</div>
+    <div class="gate-desc">This tool uses Claude to answer questions across EnergyCoRP's SharePoint knowledge base. Your key is stored only in memory for this session and never sent anywhere except Anthropic's API.</div>
+    <div class="gate-label">Anthropic API Key</div>
+    <input class="gate-input" type="password" id="apikey" placeholder="sk-ant-..." autocomplete="off" />
+    <div class="gate-hint">Don't have one? Get one at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></div>
+    <button class="gate-btn" onclick="unlock()">Access knowledge base →</button>
+    <div class="gate-err" id="gate-err">Invalid key or connection error. Please try again.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-mark">
+        <svg viewBox="0 0 18 18" fill="none">
+          <path d="M3 14L9 4L15 14H3Z" fill="#0d0f12"/>
+          <circle cx="9" cy="10" r="2" fill="#0d0f12"/>
+        </svg>
+      </div>
+      <div class="logo-name">EnergyCoRP</div>
+      <div class="logo-divider"></div>
+      <div class="logo-product">Knowledge Intelligence</div>
+    </div>
+    <div class="header-right">
+      <span class="header-tag">SharePoint · 2005–2024</span>
+      <button class="clear-btn" onclick="clearFeed()">Clear</button>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-hdr">Data scope</div>
+        <div class="nav-item active" data-scope="all" onclick="setScope(this)">
+          <span class="nav-dot" style="background:#e8a838"></span>All tabs
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-hdr">Single tab</div>
+        <div class="nav-item" data-scope="projects" onclick="setScope(this)">
+          <span class="nav-dot" style="background:#2ec4a0"></span>Projects
+        </div>
+        <div class="nav-item" data-scope="documents" onclick="setScope(this)">
+          <span class="nav-dot" style="background:#a78bfa"></span>Documents
+        </div>
+        <div class="nav-item" data-scope="queries" onclick="setScope(this)">
+          <span class="nav-dot" style="background:#f87171"></span>Knowledge queries
+        </div>
+        <div class="nav-item" data-scope="people" onclick="setScope(this)">
+          <span class="nav-dot" style="background:#60a5fa"></span>People / SMEs
+        </div>
+        <div class="nav-item" data-scope="taxonomy" onclick="setScope(this)">
+          <span class="nav-dot" style="background:#8b9099"></span>Taxonomy
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        Powered by Claude Sonnet<br>
+        50 projects · 400 docs<br>
+        250 queries · 15 SMEs · 37 tags
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title" id="scope-title">All tabs — cross-layer intelligence</div>
+          <div class="topbar-sub" id="scope-sub">Synthesizes across projects, documents, people, queries, and taxonomy</div>
+        </div>
+        <span class="scope-badge" id="scope-badge" style="color:var(--accent);border-color:var(--accent-border);background:var(--accent-bg)">Cross-layer</span>
+      </div>
+
+      <div class="chips-bar" id="chips-bar">
+        <span class="chips-lbl">Try →</span>
+      </div>
+
+      <div class="prompt-bar">
+        <textarea class="prompt-input" id="qinput" placeholder="Ask anything about EnergyCoRP's knowledge base..."></textarea>
+        <button class="ask-btn" id="askbtn" onclick="ask()">Ask ↗</button>
+      </div>
+
+      <div class="feed" id="feed">
+        <div class="empty" id="empty-state">
+          <svg class="empty-icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <rect x="5" y="5" width="30" height="22" rx="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M14 35h12M20 27v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M12 14h16M12 19h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          <p>Select a scope, tap a suggested prompt, or ask anything about EnergyCoRP's SharePoint history.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let apiKey = '';
+let currentScope = 'all';
+let history = [];
+
+const DATA = {
+  all: {
+    title: 'All tabs — cross-layer intelligence',
+    sub: 'Synthesizes across projects, documents, people, queries, and taxonomy',
+    badge: 'Cross-layer',
+    badgeColor: 'var(--accent)', badgeBorder: 'var(--accent-border)', badgeBg: 'var(--accent-bg)',
+    chips: [
+      'Who are the top experts on wholesale pricing, and what projects have they led?',
+      'Trace everything related to the renewable diesel initiative.',
+      'What compliance projects are completed, and who are the SMEs to follow up with?',
+      'Which topics generate the most employee queries AND the most project activity?',
+      'Find cross-functional patterns in how pricing questions get resolved.',
+      'Show me everything on the EV charging pilot — project, documents, and contacts.',
+    ],
+    context: `You are an intelligent enterprise knowledge assistant for EnergyCoRP, a retail and wholesale petroleum company. You have access to a 10–20 year SharePoint intelligence dataset with 5 interconnected data layers:
+
+1. PROJECTS (50 records): Initiatives across Retail Fuel, Wholesale Fuel, Convenience Stores, Lubricants, Pipeline & Logistics, Corporate — with budget, status, sponsor, region, tags, and document counts. Key projects include: EV Charging Pilot (10 sites), Fuel Pricing Algorithm Redesign, Renewable Diesel Product Launch, Carbon Emissions Baseline Report, SAP ERP Migration, UST Compliance Audit, Crude Supply Optimization, Natural Gas Trading Desk Setup, C-Store Loyalty Program Launch, Pipeline Integrity Assessment Gulf Coast, Wholesale Market Expansion Midwest, and 39 more spanning 2005–2024.
+
+2. DOCUMENTS (400 records): Document types — Project Charter, Status Report, Financial Analysis, Feasibility Study, Compliance Audit, Technical Specification, Lessons Learned, Contract, Meeting Minutes, Risk Register, Presentation, Data Model, Policy, Vendor Proposal, RFP, Business Case, Training Material, SOW. Authors: Sarah Mitchell, James Okafor, Linda Tran, David Reyes, Angela Frost, Marcus Webb, Jennifer Li, Tom Kowalski, Rachel Nguyen, Brian Patel, Chloe Andersen, Kevin Romero, Nina Hassan, Scott Devereux, Amy Chung.
+
+3. KNOWLEDGE QUERIES (250 records): Historical employee questions 2010–2024. Categories: Pricing, Compliance, Contract Terms, Operational Procedure, Financial Reporting, IT System, HSE Policy, Supply Chain, HR Policy, Strategy. Common questions about rack price formulas, wholesale margin analyses, lessons learned from prior projects, EPA compliance posture, vendor lists, terminal lease renewals.
+
+4. PEOPLE / SMEs (15 profiles): Sarah Mitchell (VP Operations, Houston — pipeline ops, site compliance, capital projects), James Okafor (Director Wholesale, Dallas — wholesale pricing, rack feeds, distributor contracts), Linda Tran (CFO Office Analyst, Chicago — budget modeling, margin analysis), David Reyes (HSE Manager, Houston — environmental compliance, EPA/OSHA, incident response), Angela Frost (IT Director, Chicago — ERP systems, OT cybersecurity, data architecture), Marcus Webb (Supply Chain Lead, Tulsa — crude supply, logistics optimization, carrier management), Jennifer Li (Marketing Director, Chicago — loyalty programs, C-store branding, consumer analytics), Tom Kowalski (Legal Counsel, Chicago — contract law, franchise agreements, regulatory filings), Rachel Nguyen (Sr. Analyst Retail Strategy, Denver — site network analysis, competitive benchmarking, EV charging), Brian Patel (Wholesale Analyst, Dallas — wholesale margin, pricing transparency, credit risk), Chloe Andersen (C-Store Operations, Atlanta — category management, staffing, fresh food), Kevin Romero (IT Retail Systems, Dallas — POS systems, pump interfaces, digital payments), Nina Hassan (ESG Lead, Chicago — carbon reporting, biofuels, renewable diesel strategy), Scott Devereux (Pipeline Engineer, Tulsa — terminal automation, integrity assessments), Amy Chung (FP&A Manager, Houston — annual budgeting, forecasting, variance analysis).
+
+5. TAXONOMY (37 tags): Business Domains (Retail Fuel, Wholesale Fuel, Convenience Stores, Lubricants, Pipeline & Logistics, Corporate), Topics (Pricing, Compliance, HSE, Supply Chain, IT Systems, Finance, Strategy, Marketing, Legal), Document Types, Fuel Products (Regular Unleaded, Premium, Diesel, Jet-A, Heating Oil, Biodiesel, Renewable Diesel), Regions (Gulf Coast, Midwest, Southeast, Southwest, Northeast, Rocky Mountain, West Coast).
+
+Synthesize across all layers to answer complex questions. Connect people to projects to documents to historical queries. Be specific, cite realistic examples from the dataset, and be genuinely useful to a petroleum industry professional. Keep answers focused and scannable.`
+  },
+  projects: {
+    title: 'Projects',
+    sub: '50 projects · 2005–2024 · retail & wholesale operations',
+    badge: 'Projects',
+    badgeColor: 'var(--teal)', badgeBorder: 'rgba(46,196,160,0.3)', badgeBg: 'var(--teal-bg)',
+    chips: [
+      'Which projects went over budget and by how much?',
+      'List all HSE-related projects and their current statuses.',
+      'What Gulf Coast projects were completed after 2018?',
+      'Which department ran the most projects?',
+      'Show projects tagged with pricing and their sponsors.',
+      'What is average project duration by business unit?',
+    ],
+    context: `You are an intelligent assistant helping employees query EnergyCoRP's SharePoint project database. The Projects dataset contains 50 project records spanning 2005–2024 across six business units: Retail Fuel, Wholesale Fuel, Convenience Stores, Lubricants, Pipeline & Logistics, and Corporate.
+
+Each record contains: Project_ID, Title, Business_Unit, Department (Operations, Finance, IT, Supply Chain, HSE, Marketing, Retail Ops, Wholesale, Legal, Strategy), Sponsor, Region, Status (Completed/Archived/In Progress/On Hold), Start_Date, End_Date, Budget_USD, Actual_Spend_USD, Headcount, SharePoint_Site URL, Document_Count, Last_Modified, Tags, Summary.
+
+Key projects: Retail Site Network Expansion Phase I, Fuel Pricing Algorithm Redesign (IT/Wholesale), C-Store Loyalty Program Launch (Marketing), Pipeline Integrity Assessment Gulf Coast (Operations), SAP ERP Migration (IT/Corporate), UST Compliance Audit (HSE/Retail Fuel), Wholesale Contract Renegotiation Q3 (Finance), Fleet Card Program Overhaul (Marketing), Lubricants Private Label Brand Development, Crude Supply Optimization Study, Retail Site Rebranding Southwest, Carbon Emissions Baseline Report (HSE/Corporate), EV Charging Pilot 10 Sites (Strategy/Retail), Renewable Diesel Product Launch (Strategy/Wholesale), Organizational Restructuring Study, Cybersecurity Audit OT Systems, Annual Budget Planning FY2022, and 33 more.
+
+Sponsors include: Sarah Mitchell, James Okafor, Linda Tran, David Reyes, Angela Frost, Marcus Webb, Jennifer Li, Tom Kowalski. Budgets range from $80K to $5M. Some projects ran over budget (actual spend up to 115% of budget). Answer specifically about project patterns, status, budget performance, sponsorship, and regional distribution.`
+  },
+  documents: {
+    title: 'Documents',
+    sub: '400 documents · 18 types · all business units',
+    badge: 'Documents',
+    badgeColor: 'var(--purple)', badgeBorder: 'rgba(167,139,250,0.3)', badgeBg: 'var(--purple-bg)',
+    chips: [
+      'What document types appear most frequently in the dataset?',
+      'Find all Risk Registers related to pipeline operations.',
+      'Which authors produced the most documents?',
+      'List confidential documents from the Finance department.',
+      'What documents exist on renewable diesel or biofuels?',
+      'Show all Lessons Learned from completed projects.',
+    ],
+    context: `You are an intelligent assistant helping employees search EnergyCoRP's SharePoint document corpus. The Documents dataset has 400 records linked to 50 projects.
+
+Each record: Document_ID, Project_ID, Project_Title, Document_Type, Title, Author, Created_Date, Modified_Date, File_Extension (.docx/.xlsx/.pptx/.pdf), File_Size_KB, Version (v1.0 through v4.9), Confidentiality (Internal/Confidential/Public/Restricted), SharePoint_URL, Keywords, Abstract.
+
+18 document types: Project Charter, Status Report, Financial Analysis, Feasibility Study, Compliance Audit, Technical Specification, Lessons Learned, Contract, Meeting Minutes, Risk Register, Presentation, Data Model, Policy, Vendor Proposal, RFP, Business Case, Training Material, Statement of Work.
+
+15 authors: Sarah Mitchell, James Okafor, Linda Tran, David Reyes, Angela Frost, Marcus Webb, Jennifer Li, Tom Kowalski, Rachel Nguyen, Brian Patel, Chloe Andersen, Kevin Romero, Nina Hassan, Scott Devereux, Amy Chung.
+
+Key keyword themes across documents: fuel price, contract, compliance, margin, throughput, inventory, HSE, capital, regulatory, customer, wholesale, retail, pipeline, forecast, budget.
+
+Answer specifically about finding, categorizing, filtering, or analyzing documents in this corpus.`
+  },
+  queries: {
+    title: 'Knowledge queries',
+    sub: '250 historical queries · 2010–2024 · resolved & open',
+    badge: 'Queries',
+    badgeColor: 'var(--coral)', badgeBorder: 'rgba(248,113,113,0.3)', badgeBg: 'var(--coral-bg)',
+    chips: [
+      'What are the most common question categories employees ask?',
+      'Show unresolved or escalated queries about pricing.',
+      'Which SMEs resolve the most knowledge queries?',
+      'What do employees most often ask about wholesale contracts?',
+      'Find queries about rack price feeds and who answered them.',
+      'What HSE questions have been asked most recently?',
+    ],
+    context: `You are an intelligent assistant analyzing EnergyCoRP's historical knowledge query log. The Knowledge_Queries dataset has 250 records of employee questions submitted from 2010–2024.
+
+Each record: Query_ID, Submitted_Date, Submitter, Department, Business_Unit, Category, Query_Text, Source_Project_ID, Assigned_To, Resolution_Date, Status (Resolved/In Progress/Escalated), Resolution_Summary, Helpful_Documents, Tags.
+
+10 query categories: Pricing, Compliance, Contract Terms, Operational Procedure, Financial Reporting, IT System, HSE Policy, Supply Chain, HR Policy, Strategy.
+
+Common query patterns: rack price formula questions for specific fuels/regions, requests to locate prior project analyses and lessons learned, compliance posture questions on EPA Tier 3/UST/OSHA, document approval chains, volume thresholds for wholesale pricing tiers, approved vendor lists for site remediation, system access questions for SAP/POS platforms, carbon emissions data requests, KPIs used in past studies.
+
+Most queries are resolved (referencing prior documents or project records). Some are escalated. Help users find patterns in what employees ask, who resolves them, and which topics generate the most inquiry or confusion.`
+  },
+  people: {
+    title: 'People / SMEs',
+    sub: '15 subject matter experts across all business units',
+    badge: 'People',
+    badgeColor: 'var(--blue)', badgeBorder: 'rgba(96,165,250,0.3)', badgeBg: 'var(--blue-bg)',
+    chips: [
+      'Who is the best person to ask about EPA compliance?',
+      'Which SME has authored the most documents?',
+      'Who covers wholesale pricing and distributor contracts?',
+      'Find all SMEs based in Houston or Tulsa.',
+      'Who should I contact about EV charging strategy?',
+      'Which SME has led the most projects?',
+    ],
+    context: `You are an intelligent assistant helping employees find the right subject matter expert at EnergyCoRP. The People_SME dataset has 15 expert profiles.
+
+Each record: Employee_ID, Name, Title, Department, Business_Unit, Expertise_Areas, Projects_Led (count), Documents_Authored (count), Queries_Resolved (count), Email, Location.
+
+Full SME directory:
+- Sarah Mitchell, VP Operations, Houston TX — pipeline ops, site compliance, capital projects (sarah.mitchell@energycorp.com)
+- James Okafor, Director Wholesale, Dallas TX — wholesale pricing, rack feeds, distributor contracts (james.okafor@energycorp.com)
+- Linda Tran, CFO Office Analyst, Chicago IL — budget modeling, margin analysis, financial reporting (linda.tran@energycorp.com)
+- David Reyes, HSE Manager, Houston TX — environmental compliance, incident response, EPA/OSHA (david.reyes@energycorp.com)
+- Angela Frost, IT Director, Chicago IL — ERP systems, OT cybersecurity, data architecture (angela.frost@energycorp.com)
+- Marcus Webb, Supply Chain Lead, Tulsa OK — crude supply, logistics optimization, carrier management (marcus.webb@energycorp.com)
+- Jennifer Li, Marketing Director, Chicago IL — loyalty programs, C-store branding, consumer analytics (jennifer.li@energycorp.com)
+- Tom Kowalski, Legal Counsel, Chicago IL — contract law, franchise agreements, regulatory filings (tom.kowalski@energycorp.com)
+- Rachel Nguyen, Sr. Analyst Retail Strategy, Denver CO — site network analysis, competitive benchmarking, EV charging (rachel.nguyen@energycorp.com)
+- Brian Patel, Wholesale Analyst, Dallas TX — wholesale margin, pricing transparency, credit risk (brian.patel@energycorp.com)
+- Chloe Andersen, C-Store Operations, Atlanta GA — category management, staffing, fresh food (chloe.andersen@energycorp.com)
+- Kevin Romero, IT Retail Systems, Dallas TX — POS systems, pump interfaces, digital payments (kevin.romero@energycorp.com)
+- Nina Hassan, ESG Lead, Chicago IL — carbon reporting, biofuels, renewable diesel strategy (nina.hassan@energycorp.com)
+- Scott Devereux, Pipeline Engineer, Tulsa OK — terminal automation, integrity assessments (scott.devereux@energycorp.com)
+- Amy Chung, FP&A Manager, Houston TX — annual budgeting, forecasting, variance analysis (amy.chung@energycorp.com)
+
+Help users find the right expert, understand their scope, and connect them to relevant projects and documents.`
+  },
+  taxonomy: {
+    title: 'Taxonomy',
+    sub: '37 tags across 5 categories · controlled vocabulary',
+    badge: 'Taxonomy',
+    badgeColor: '#8b9099', badgeBorder: 'rgba(139,144,153,0.3)', badgeBg: 'rgba(139,144,153,0.08)',
+    chips: [
+      'What business domains have the most tagged documents?',
+      'List all fuel product types in the taxonomy.',
+      'Which topic tags appear most across the knowledge base?',
+      'What regions are covered and how many documents per region?',
+      'How are compliance documents classified in this taxonomy?',
+      'Show all document type categories and their descriptions.',
+    ],
+    context: `You are an intelligent assistant helping users understand and navigate EnergyCoRP's SharePoint taxonomy and controlled vocabulary. The Taxonomy_Tags dataset has 37 tag records across 5 categories, each with Document_Count and Project_Count.
+
+Full taxonomy:
+
+BUSINESS DOMAIN (6 tags): Retail Fuel (consumer-facing fuel stations), Wholesale Fuel (B2B supply and distribution), Convenience Stores (C-store retail and category management), Lubricants (motor oil and specialty lubricants), Pipeline & Logistics (terminal, pipeline, carrier operations), Corporate (cross-functional enterprise functions)
+
+TOPIC (9 tags): Pricing (fuel pricing models, rack feeds, margin analysis), Compliance (regulatory, EPA, OSHA, tax compliance), HSE (health, safety, environmental management), Supply Chain (procurement, crude supply, logistics optimization), IT Systems (ERP, POS, OT, data platforms), Finance (budgeting, FP&A, financial reporting), Strategy (M&A, market expansion, competitive intelligence), Marketing (loyalty, branding, customer analytics), Legal (contracts, franchise, regulatory filings)
+
+DOCUMENT TYPE (8 tags): Project Charter, Status Report, Lessons Learned, Compliance Audit, Financial Analysis, Feasibility Study, Risk Register, Contract
+
+FUEL PRODUCT (7 tags): Regular Unleaded (87-octane), Premium Unleaded (91/93-octane), Diesel (ULSD), Jet-A (aviation turbine fuel), Heating Oil (#2 distillate), Biodiesel (B20 and B100 blends), Renewable Diesel (HVO-based drop-in)
+
+REGION (7 tags): Gulf Coast (TX/LA/MS/AL), Midwest (OH/IN/IL/MI/WI), Southeast (FL/GA/SC/NC/TN), Southwest (AZ/NM/OK/AR), Northeast (PA/NY/NJ/CT/MA), Rocky Mountain (CO/WY/MT/ID/UT), West Coast (CA/OR/WA)
+
+Help users understand the classification system, navigate content by tag, and improve their search and retrieval strategies.`
+  }
+};
+
+function unlock() {
+  const k = document.getElementById('apikey').value.trim();
+  if (!k.startsWith('sk-ant-') && !k.startsWith('sk-')) {
+    document.getElementById('gate-err').style.display = 'block';
+    document.getElementById('gate-err').textContent = 'Key should start with sk-ant-. Please check and try again.';
+    return;
+  }
+  apiKey = k;
+  document.getElementById('keygate').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  renderChips();
+}
+
+document.getElementById('apikey').addEventListener('keydown', e => {
+  if (e.key === 'Enter') unlock();
+});
+
+function setScope(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  currentScope = el.dataset.scope;
+  const d = DATA[currentScope];
+  document.getElementById('scope-title').textContent = d.title;
+  document.getElementById('scope-sub').textContent = d.sub;
+  const b = document.getElementById('scope-badge');
+  b.textContent = d.badge;
+  b.style.color = d.badgeColor;
+  b.style.borderColor = d.badgeBorder;
+  b.style.background = d.badgeBg;
+  document.getElementById('qinput').placeholder = currentScope === 'all'
+    ? 'Ask anything across all data layers...'
+    : `Ask about ${d.title.toLowerCase()}...`;
+  renderChips();
+}
+
+function renderChips() {
+  const bar = document.getElementById('chips-bar');
+  bar.innerHTML = '<span class="chips-lbl">Try →</span>';
+  DATA[currentScope].chips.forEach(c => {
+    const el = document.createElement('span');
+    el.className = 'chip';
+    el.textContent = c;
+    el.onclick = () => { document.getElementById('qinput').value = c; ask(); };
+    bar.appendChild(el);
+  });
+}
+
+async function ask() {
+  const q = document.getElementById('qinput').value.trim();
+  if (!q || !apiKey) return;
+  const btn = document.getElementById('askbtn');
+  btn.disabled = true;
+
+  const feed = document.getElementById('feed');
+  const empty = document.getElementById('empty-state');
+  if (empty) empty.remove();
+
+  const thinking = document.createElement('div');
+  thinking.className = 'thinking-card';
+  thinking.innerHTML = '<div class="dots"><span></span><span></span><span></span></div><span>Searching knowledge base...</span>';
+  feed.appendChild(thinking);
+  feed.scrollTop = feed.scrollHeight;
+
+  const d = DATA[currentScope];
+  history.push({ role: 'user', content: q });
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: d.context,
+        messages: history.slice(-10)
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API error ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    const answer = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || 'No response.';
+    history.push({ role: 'assistant', content: answer });
+
+    thinking.remove();
+
+    const card = document.createElement('div');
+    card.className = 'answer-card';
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-q" title="${q.replace(/"/g,'&quot;')}">${q}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span class="scope-badge" style="font-size:10px;padding:2px 7px;color:${d.badgeColor};border-color:${d.badgeBorder};background:${d.badgeBg}">${d.badge}</span>
+          <span class="card-time">${time}</span>
+        </div>
+      </div>
+      <div class="card-body">${answer}</div>
+      <div class="card-footer">
+        <span class="source-pill">EnergyCoRP SharePoint</span>
+        <span class="source-pill">${d.title}</span>
+        ${currentScope === 'all' ? '<span class="source-pill">Cross-layer synthesis</span>' : ''}
+      </div>`;
+    feed.appendChild(card);
+    feed.scrollTop = feed.scrollHeight;
+
+  } catch(e) {
+    thinking.remove();
+    const err = document.createElement('div');
+    err.className = 'answer-card';
+    err.innerHTML = `<div class="card-body" style="color:var(--coral)">Error: ${e.message}. Check your API key and try again.</div>`;
+    feed.appendChild(err);
+    history.pop();
+  }
+
+  document.getElementById('qinput').value = '';
+  btn.disabled = false;
+  document.getElementById('qinput').focus();
+}
+
+function clearFeed() {
+  const feed = document.getElementById('feed');
+  feed.innerHTML = `<div class="empty" id="empty-state">
+    <svg class="empty-icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
+      <rect x="5" y="5" width="30" height="22" rx="3" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M14 35h12M20 27v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M12 14h16M12 19h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <p>Select a scope, tap a suggested prompt, or ask anything about EnergyCoRP's SharePoint history.</p>
+  </div>`;
+  history = [];
+}
+
+document.getElementById('qinput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(); }
+});
+</script>
+</body>
+</html>
